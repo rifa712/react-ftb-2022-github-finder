@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 // context
-import GithubContext from '../../context/GithubContext'
+import GithubContext from '../../context/github/GithubContext'
 // components
 import Spinner from '../layout/Spinner'
 import UserItem from './UserItem'
