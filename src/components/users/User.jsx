@@ -1,15 +1,11 @@
 import React, { useEffect, useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
 // icons
-import {
-  FaCodepen,
-  FaCommentSlash,
-  FaStore,
-  FaUserFriends,
-  FaUsers,
-} from 'react-icons/fa'
+import { FaCodepen, FaStore, FaUserFriends, FaUsers } from 'react-icons/fa'
 // context
 import GithubContext from '../../context/github/GithubContext'
+// action
+import { getUser, getUserRepos } from '../../context/github/GithubActions'
 // components
 import RepoList from '../repos/RepoList'
 // layout
@@ -20,18 +16,25 @@ const User = () => {
   const params = useParams()
 
   //   constext
-  const { getUser, getUserRepos, repos, user, loading } =
-    useContext(GithubContext)
+  const { dispatch, repos, user, loading } = useContext(GithubContext)
 
   useEffect(() => {
     // effect
 
     // clean up
     return () => {
-      getUser(params.login)
-      getUserRepos(params.login)
+      dispatch({ type: 'SET_LOADING' })
+      const getUserData = async () => {
+        const userData = await getUser(params.login)
+        dispatch({ type: 'GET_USER', payload: userData })
+
+        const userRepoData = await getUserRepos(params.login)
+        dispatch({ type: 'GET_REPOS', payload: userRepoData })
+      }
+
+      getUserData()
     }
-  }, [])
+  }, [dispatch, params.login])
 
   const {
     name,
