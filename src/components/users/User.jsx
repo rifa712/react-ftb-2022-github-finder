@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 // icons
 import { FaCodepen, FaStore, FaUserFriends, FaUsers } from 'react-icons/fa'
@@ -14,22 +14,23 @@ import Spinner from '../layout/Spinner'
 const User = () => {
   // getting params
   const params = useParams()
+  const ref = useRef(true)
 
   //   constext
   const { dispatch, repos, user, loading } = useContext(GithubContext)
 
   useEffect(() => {
     // effect
+    dispatch({ type: 'SET_LOADING' })
+    const getUserData = async () => {
+      const userData = await getUserAndRepos(params.login)
+      dispatch({ type: 'GET_USER_AND_REPOS', payload: userData })
+    }
 
+    getUserData()
     // clean up
     return () => {
-      dispatch({ type: 'SET_LOADING' })
-      const getUserData = async () => {
-        const userData = await getUserAndRepos(params.login)
-        dispatch({ type: 'GET_USER_AND_REPOS', payload: userData })
-      }
-
-      getUserData()
+      ref.currentValue = false
     }
   }, [dispatch, params.login])
 
